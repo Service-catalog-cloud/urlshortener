@@ -1,11 +1,12 @@
 import express from 'express'
+import morgan from 'morgan'
 
 import {getUrl, newUrl} from '../lib/db';
 
 let app: express.Application = express();
 app.use(express.json());
+app.use(morgan("common"))
 
-app.use("/ui", express.static("public/"))
 app.get("/", async(req, res) => {
     res.redirect("/ui/")
 })
@@ -22,9 +23,8 @@ app.post("/new", async (req, res) => {
 app.get("/:token", async (req, res) => {
     let token = req.params.token
     await getUrl(token).then((data) => {
-        console.log(data)
-        if (data.Item.Url) {
-            res.redirect(data.Item.Url)
+        if (data?.Item?.Url) {
+            res.redirect(data?.Item?.Url)
         } else {
             res.send("invalid token")
         }
